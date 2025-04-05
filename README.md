@@ -1,6 +1,6 @@
-# JournalKeeper
+# Simple Python Journal CLI Application
 
-A lightweight SQLite-based journaling application that helps you organize and track entries by subject categories.
+A command-line interface (CLI) application for creating and managing simple journal entries categorized by subject, built using Python and SQLite.
 
 ## Overview
 
@@ -13,34 +13,62 @@ JournalKeeper is a simple yet powerful command-line journal application that all
 The application uses SQLite for data storage, providing a reliable and portable database solution without requiring complex setup.
 
 ## Features
-
-- **Subject Organization**: Categorize your entries by custom subjects
-- **Chronological Tracking**: Automatically timestamps all entries
-- **Easy Retrieval**: View all entries for a specific subject
-- **Simple Interface**: User-friendly command-line menu system
-- **Data Persistence**: All entries stored in a local SQLite database
-- **Error Handling**: Robust error management for reliable operation
+- Add new subjects for journal entries.
+- Add new journal entries under specific subjects (identified by name or ID).
+- View all entries for a chosen subject, sorted oldest or newest first.
+- List all existing subjects with their IDs.
+- Delete specific journal entries after viewing them.
+- Persistent storage using an SQLite database file (`Journal.db`).
+- Basic error handling and user feedback.
+- Console clearing for better readability when viewing entries.
 
 ## Installation
 
 ### Requirements
-- Python 3.6 or higher
+- Python 3.6 or higher (due to f-strings and type hinting usage, though adaptable for older versions)
 - SQLite3 (included with Python)
+- No external libraries needed (uses built-in `sqlite3`, `os`, `sys`, `datetime`)
 
-### Setup
-1. Clone this repository:
-   ```
-   git clone https://github.com/toopkungza/journalkeeper.git
-   cd journalkeeper
-   ```
+## How to Run
+1.  Ensure you have Python 3 installed.
+2.  Clone this repository or download the `.py` files into a single directory.
+3.  Navigate to that directory in your terminal.
+4.  Run the application using the command:
+    ```bash
+    python main.py
+    ```
+5.  Follow the on-screen menu prompts. The application will create a `Journal.db` file in the same directory to store your data.
 
-2. No additional dependencies required - JournalKeeper uses only Python standard libraries.
+## Project Structure
+The application is organized into several Python files to promote maintainability and separation of concerns:
+*   **`main.py`**:
+    *   The main entry point of the application (`if __name__ == "__main__":`).
+    *   Contains the primary application loop (`main()` function) that displays the menu and routes user choices to the appropriate handler functions.
+    *   Handles overall application setup (database initialization) and teardown (database closing).
+    *   Manages top-level error handling (e.g., `DatabaseError`, `KeyboardInterrupt`).
+*   **`database.py`**:
+    *   Defines the `JournalDatabase` class, encapsulating all interactions with the SQLite database.
+    *   Includes methods for connecting, creating tables (`_create_tables`), inserting subjects (`insert_subject`), inserting entries (`insert_entry`), retrieving subjects (`get_all_subjects`), retrieving entries (`get_entries_for_subject`), deleting entries (`delete_entry`), and closing the connection (`close`).
+    *   Defines a custom `DatabaseError` exception for database-specific issues.
+    *   Uses the `constants.py` module for SQL query strings.
+*   **`handlers.py`**:
+    *   Contains functions that directly handle the logic for each menu option presented in `main.py`.
+    *   Examples: `handle_add_subject`, `handle_add_entry`, `handle_view_entries`, `handle_list_subjects`, `handle_credits`.
+    *   These functions orchestrate calls to `ui.py` functions (for input/output) and `database.py` methods (for data manipulation).
+*   **`ui.py`**:
+    *   Includes functions responsible for user interaction and displaying information to the console.
+    *   Examples: `clear_console` (clears the terminal screen), `display_entries` (formats and prints journal entries), `select_subject` (handles the logic for prompting the user to choose a subject by ID or name).
+*   **`constants.py`**:
+    *   Stores constant values used throughout the application, primarily the SQL query strings.
+    *   Centralizing constants makes queries easier to find and modify without searching through other code files.
+*   **`Journal.db`** (Generated):
+    *   The SQLite database file created automatically when the application runs for the first time. It stores all the subject and entry data.
 
 ## Usage
 
 Run the application with:
 ```
-python journalkeeper.py
+python main.py
 ```
 
 ### Main Menu Options
@@ -60,8 +88,11 @@ python journalkeeper.py
 
 4. **List all subjects**
    - View all available subject categories
+   
+5. **Credits**
+   - List the credits
 
-5. **Exit**
+6. **Exit**
    - Close the application
 
 ## Data Structure
@@ -107,40 +138,14 @@ JournalKeeper DB is built with an object-oriented approach:
 ## Customization
 
 ### Database Location
-By default, the database file (`journal.db`) is created in the same directory as the script. You can customize the location by modifying the `db_file` parameter when initializing `JournalDatabase`.
+By default, the database file (`Journal.db`) is created in the same directory as the script. You can customize the location by modifying DB_FILE_NAME in constants.py.
 
 ### Date Format
-The default date format is ISO-style (`YYYY-MM-DD HH:MM:SS`). You can customize this by modifying the `strftime` format in the `insert_entry` method.
-
-## Advanced Usage
-
-### Programmatic API
-The `JournalDatabase` class can be imported and used in other Python scripts:
-
-```python
-from journalkeeper import JournalDatabase
-
-# Initialize database
-db = JournalDatabase('custom_location.db')
-
-# Add a subject
-db.insert_subject('Work')
-
-# Add an entry
-db.insert_entry('Work', 'Completed the quarterly report')
-
-# Retrieve entries
-entries, message = db.get_entries_for_subject('Work')
-for date, detail in entries:
-    print(f"{date}: {detail}")
-
-# Clean up
-db.close()
-```
+The default date format is ISO-style (`YYYY-MM-DD HH:MM:SS`). You can customize this by modifying the `strftime` format in the `insert_entry` method within database.py.
 
 ## Best Practices
 
-1. **Regular Backups**: While SQLite is reliable, making occasional backups of your `journal.db` file is recommended.
+1. **Regular Backups**: While SQLite is reliable, making occasional backups of your `Journal.db` file is recommended.
 
 2. **Consistent Naming**: Using consistent subject naming conventions will make retrieval easier.
 
@@ -160,7 +165,7 @@ If entries seem to be missing, check if you're using the exact subject name. Sub
 
 Potential future features:
 - Search functionality across all entries
-- Entry editing and deletion
+- Entry editing
 - Entry tagging system
 - Export/import capabilities
 - Simple statistics (entries per subject, activity over time)
