@@ -1,9 +1,9 @@
 # handlers.py
 
-"""Contains handler functions for the main application menu choices."""
+"""Handler functions for the main application menu choices"""
 
 from database import JournalDatabase # Import the actual class
-from ui import select_subject, display_entries, clear_console # Import UI functions
+from ui import select_subject, display_entries, clear_console
 
 def handle_add_subject(db: JournalDatabase):
     """Handles the 'Add Subject' menu option."""
@@ -74,12 +74,11 @@ def handle_list_subjects(db: JournalDatabase):
         
 def handle_credits():
     """Displays the credits screen."""
-    clear_console() # Optional: clear screen before showing credits
+    clear_console()
     print("\n--- Credits ---")
     print("Application developed using Python and SQLite.")
     print("Intended for personal journaling and information recall.")
-    # Add your name or other credits here if you like
     print("-------------\n")
-    input("Press Enter to return to the main menu...") # Pause screen
+    input("Press Enter to return to the main menu...")
     
 # EOF #

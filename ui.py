@@ -1,26 +1,25 @@
 # ui.py
-"""Contains functions for user interface interactions and display."""
+
+"""Functions for user interface interactions and display"""
 
 import os
 import sys
 import sqlite3 # For sqlite3.Row type hint
 from typing import List, Tuple, Optional, TYPE_CHECKING
-
-# Use TYPE_CHECKING to avoid circular import issues with type hints
 if TYPE_CHECKING:
-    from database import JournalDatabase # Import only for type hinting
-
-# --- Helper Function to Clear Console ---
+    from database import JournalDatabase
+    
+#Clear Console
 def clear_console():
     """Clears the terminal screen."""
     command = 'cls' if os.name == 'nt' else 'clear'
     os.system(command)
 
-# --- UI Display Functions ---
+#UI Display Functions
 def display_entries(entries: List[sqlite3.Row], oldest_first: bool = True):
     """Format and display entries, including their IDs."""
     if not entries:
-        return # Message should have been printed by the caller
+        return
 
     sort_description = "oldest to newest" if oldest_first else "newest to oldest"
     print(f"\n===== Entries (sorted {sort_description}) =====")
@@ -31,7 +30,7 @@ def display_entries(entries: List[sqlite3.Row], oldest_first: bool = True):
         print(f"{entry['Detail']}")
         print("-" * 50)
 
-# --- UI Input Functions ---
+#UI Input Functions
 def select_subject(db: 'JournalDatabase', action_description: str = "") -> Tuple[bool, Optional[str], str]:
     """
     Utility function to handle subject selection by either ID or name.
@@ -81,7 +80,6 @@ def select_subject(db: 'JournalDatabase', action_description: str = "") -> Tuple
 
             if subject_name.lower() not in subject_map_name_to_id:
                  print(f"Note: Subject '{subject_name}' doesn't exist yet (it might be created if needed by the action).")
-
             return True, subject_name, "Subject selected by name."
         else:
             print("Invalid selection. Please choose 1 or 2.")

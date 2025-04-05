@@ -5,12 +5,9 @@
 import sqlite3
 from datetime import datetime
 from typing import List, Tuple, Optional, Any
-
-# Import constants from the constants file
 import constants
 
 class DatabaseError(Exception):
-    """Custom exception for database related errors."""
     pass
 
 class JournalDatabase:
@@ -26,7 +23,7 @@ class JournalDatabase:
             raise DatabaseError(f"Fatal database initialization error: {e}") from e
 
     def _execute(self, sql: str, params: tuple = ()) -> sqlite3.Cursor:
-        """Executes SQL query with error handling."""
+        """Executes SQL query."""
         if not self._conn:
              raise DatabaseError("Database connection is not established.")
         try:
@@ -64,7 +61,7 @@ class JournalDatabase:
              return False, f"Unexpected error adding subject: {e}"
 
     def get_subject_id(self, subject_name: str, create_if_not_exists: bool = True) -> Optional[int]:
-        """Get subject ID by name, optionally creating it if it doesn't exist."""
+        """Get subject ID by name, creating it if it doesn't exist."""
         try:
             cursor = self._execute(constants.SELECT_SUBJECT_ID_BY_NAME, (subject_name,))
             result = cursor.fetchone()
@@ -96,7 +93,7 @@ class JournalDatabase:
             return False
 
     def insert_entry(self, subject_identifier: Any, detail: str, entry_date: Optional[str] = None) -> Tuple[bool, str]:
-        """Insert a new entry, allowing subject by name (str) or ID (int)."""
+        """Insert a new entry, allowing subject by name or ID."""
         if entry_date is None:
             entry_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -178,9 +175,8 @@ class JournalDatabase:
              return False, f"Unexpected error deleting entry ID {entry_id}: {e}"
 
     def close(self):
-        """Close the database connection."""
         if self._conn:
             self._conn.close()
-            self._conn = None # Mark as closed
+            self._conn = None
             print("Database connection closed.")
 # EOF #

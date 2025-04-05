@@ -1,7 +1,5 @@
 # constants.py
 
-"""Stores constant values, primarily SQL queries."""
-
 CREATE_SUBJECT_TABLE = """
 CREATE TABLE IF NOT EXISTS Subject (
     SubjectID INTEGER PRIMARY KEY AUTOINCREMENT,
